@@ -20,6 +20,7 @@ export default async function Messages() {
         <div className="flex items-center space-x-6">
           <Link href="/dashboard" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">My Resumes</Link>
           <Link href="/dashboard/messages" className="text-sm font-medium text-neutral-900 border-b-2 border-black pb-1">Inbox</Link>
+          <Link href="/dashboard/settings" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">Settings</Link>
           <span className="text-neutral-300">|</span>
           <span className="text-sm text-neutral-600 hidden md:inline">Welcome, {session.user.name}</span>
           <form action="/api/auth/signout" method="POST">

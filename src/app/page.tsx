@@ -65,7 +65,6 @@ export default async function Home() {
               <p className="text-neutral-400 italic text-sm">The feed is currently empty. Be the first to register and highlight your resume!</p>
             ) : (
               highlightedResumes.map((resume) => (
-                {/* 404 Bug Fixed: Removed the quotes from the href and key variables */}
                 <Link className="block bg-white p-6 rounded-lg shadow-sm border border-neutral-200 hover:shadow-md transition-shadow cursor-pointer group" href={`/resume/${resume.id}`} key={resume.id}>
                   <div className="flex items-center space-x-4 mb-4">
                     {resume.user.image ? (
