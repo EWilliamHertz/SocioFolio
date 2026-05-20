@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { sendMessage } from "@/app/actions/message";
+import ShareButton from "./ShareButton";
 
 export default async function ResumeViewer({ params, searchParams }: { params: Promise<{ id: string }>, searchParams: Promise<{ sent?: string }> }) {
   const { id } = await params;
@@ -16,12 +17,19 @@ export default async function ResumeViewer({ params, searchParams }: { params: P
 
   if (!resume) notFound();
 
-  // Parse the custom sections back out of JSON
-  let customSections = [];
-  try {
-    if (resume.content) customSections = JSON.parse(resume.content);
-  } catch (e) {
-    console.error("Content is not JSON");
+  // Safely parse custom sections, falling back to legacy plain text for older resumes
+  let customSections: any[] = [];
+  let legacyContent = "";
+  if (resume.content) {
+    try {
+      if (resume.content.trim().startsWith("[")) {
+        customSections = JSON.parse(resume.content);
+      } else {
+        legacyContent = resume.content;
+      }
+    } catch (e) {
+      legacyContent = resume.content;
+    }
   }
 
   // Safely extract Youtube video ID
@@ -35,7 +43,10 @@ export default async function ResumeViewer({ params, searchParams }: { params: P
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900 py-12 px-6">
       <div className="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-sm border border-neutral-200">
-        <Link href="/" className="text-blue-600 hover:underline mb-8 inline-block text-sm">&larr; Back to Feed</Link>
+        <div className="flex items-center justify-between mb-8">
+          <Link href="/" className="text-blue-600 hover:underline inline-block text-sm">&larr; Back to Feed</Link>
+          <ShareButton />
+        </div>
 
         {sent && (
           <div className="mb-8 p-4 bg-green-50 text-green-800 rounded-md border border-green-200 text-sm font-medium">
@@ -95,6 +106,15 @@ export default async function ResumeViewer({ params, searchParams }: { params: P
             </div>
           )}
 
+          {/* Render legacy text content if it exists */}
+          {legacyContent && (
+            <div className="mb-8">
+              <h3 className="text-xl font-semibold mb-3 text-neutral-800">Experience & Details</h3>
+              <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap">{legacyContent}</p>
+            </div>
+          )}
+
+          {/* Render new dynamic JSON content */}
           {customSections.length > 0 && customSections.map((section: any, idx: number) => (
             section.title || section.content ? (
               <div key={idx} className="mb-8">
