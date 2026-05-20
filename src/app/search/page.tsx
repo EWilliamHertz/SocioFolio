@@ -22,7 +22,7 @@ export default async function SearchResults({ searchParams }: { searchParams: Pr
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <header className="flex items-center justify-between p-6 bg-white shadow-sm">
-        <Link href="/" className="text-2xl font-bold tracking-tight text-neutral-800">PortfolioFeed</Link>
+        <Link href="/" className="text-2xl font-bold tracking-tight text-neutral-800">Sociofolio</Link>
         <form action="/search" className="hidden md:block relative">
           <input 
             type="text" 

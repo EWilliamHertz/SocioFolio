@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
 
 export default async function Home() {
-  // Fetching organic data directly from your NeonDB. 
-  // It will be empty until we build the creation tools, satisfying the "no hardcoded placeholders" rule.
+  const session = await auth();
+  
   const highlightedResumes = await prisma.resume.findMany({
     where: { isHighlighted: true },
     include: { user: true },
@@ -13,9 +14,8 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <header className="flex items-center justify-between p-6 bg-white shadow-sm">
-        <h1 className="text-2xl font-bold tracking-tight text-neutral-800">PortfolioFeed</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-neutral-800">Sociofolio</h1>
         <nav className="flex items-center space-x-6">
-          {/* Header Search Bar */}
           <form action="/search" className="hidden md:block relative">
             <input 
               type="text" 
@@ -28,12 +28,24 @@ export default async function Home() {
             </button>
           </form>
 
-          <Link className="text-sm font-medium text-neutral-600 hover:text-neutral-900" href="/login">
-            Log in
-          </Link>
-          <Link className="text-sm font-medium px-4 py-2 bg-black text-white rounded-md hover:bg-neutral-800 transition-colors" href="/register">
-            Register
-          </Link>
+          {/* Dynamic Authentication Header */}
+          {session?.user ? (
+            <div className="flex items-center space-x-4">
+              <Link className="text-sm font-medium text-neutral-900 hover:underline" href="/dashboard">
+                Go to Dashboard
+              </Link>
+              <form action="/api/auth/signout" method="POST">
+                <button type="submit" className="text-sm font-medium px-4 py-2 bg-neutral-200 text-neutral-900 rounded-md hover:bg-neutral-300 transition-colors">
+                  Log out
+                </button>
+              </form>
+            </div>
+          ) : (
+            <>
+              <Link className="text-sm font-medium text-neutral-600 hover:text-neutral-900" href="/login">Log in</Link>
+              <Link className="text-sm font-medium px-4 py-2 bg-black text-white rounded-md hover:bg-neutral-800 transition-colors" href="/register">Register</Link>
+            </>
+          )}
         </nav>
       </header>
 
@@ -53,7 +65,8 @@ export default async function Home() {
               <p className="text-neutral-400 italic text-sm">The feed is currently empty. Be the first to register and highlight your resume!</p>
             ) : (
               highlightedResumes.map((resume) => (
-                <Link className="block bg-white p-6 rounded-lg shadow-sm border border-neutral-200 hover:shadow-md transition-shadow cursor-pointer group" href="{`/resume/${resume.id}`}" key="{resume.id}">
+                {/* 404 Bug Fixed: Removed the quotes from the href and key variables */}
+                <Link className="block bg-white p-6 rounded-lg shadow-sm border border-neutral-200 hover:shadow-md transition-shadow cursor-pointer group" href={`/resume/${resume.id}`} key={resume.id}>
                   <div className="flex items-center space-x-4 mb-4">
                     {resume.user.image ? (
                       <img src={resume.user.image} alt={resume.user.name || "User"} className="w-10 h-10 rounded-full object-cover" />

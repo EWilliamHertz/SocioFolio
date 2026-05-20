@@ -21,9 +21,12 @@ export default async function Dashboard() {
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <header className="flex items-center justify-between p-6 bg-white shadow-sm">
-        <Link href="/" className="text-2xl font-bold tracking-tight text-neutral-800">PortfolioFeed</Link>
-        <div className="flex items-center space-x-4">
-          <span className="text-sm text-neutral-600">Welcome, {session.user.name}</span>
+        <Link href="/" className="text-2xl font-bold tracking-tight text-neutral-800">Sociofolio</Link>
+        <div className="flex items-center space-x-6">
+          <Link href="/dashboard" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">My Resumes</Link>
+          <Link href="/dashboard/messages" className="text-sm font-medium text-neutral-600 hover:text-neutral-900">Inbox</Link>
+          <span className="text-neutral-300">|</span>
+          <span className="text-sm text-neutral-600 hidden md:inline">Welcome, {session.user.name}</span>
           <form action="/api/auth/signout" method="POST">
             <button type="submit" className="text-sm font-medium text-red-600 hover:text-red-800">Sign Out</button>
           </form>
@@ -33,18 +36,18 @@ export default async function Dashboard() {
       <div className="max-w-5xl mx-auto py-12 px-6">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold">My Resumes</h2>
-          <button className="px-4 py-2 bg-black text-white rounded-md hover:bg-neutral-800 transition-colors text-sm font-medium">
+          <Link href="/dashboard/create" className="px-4 py-2 bg-black text-white rounded-md hover:bg-neutral-800 transition-colors text-sm font-medium">
             + Create New Resume
-          </button>
+          </Link>
         </div>
 
         {userResumes.length === 0 ? (
           <div className="bg-white p-12 text-center rounded-xl border border-neutral-200 shadow-sm">
             <h3 className="text-lg font-medium text-neutral-900 mb-2">You haven't created any resumes yet</h3>
             <p className="text-neutral-500 mb-6">Build your first portfolio piece to start attracting recruiters.</p>
-            <button className="px-6 py-2 bg-black text-white rounded-md hover:bg-neutral-800 transition-colors font-medium">
+            <Link href="/dashboard/create" className="px-6 py-2 bg-black text-white rounded-md hover:bg-neutral-800 transition-colors font-medium inline-block">
               Create Resume
-            </button>
+            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

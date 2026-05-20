@@ -6,7 +6,7 @@ export default function Register() {
     <main className="min-h-screen bg-neutral-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="text-center block text-2xl font-bold tracking-tight text-neutral-800 mb-6">
-          PortfolioFeed
+          Sociofolio
         </Link>
         <h2 className="text-center text-3xl font-extrabold text-neutral-900">Create your account</h2>
         <p className="mt-2 text-center text-sm text-neutral-600">

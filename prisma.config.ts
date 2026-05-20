@@ -1,5 +1,0 @@
-export default {
-  migrate: {
-    databaseUrl: process.env.DATABASE_URL,
-  },
-};
