@@ -63,9 +63,9 @@ export default async function Dashboard() {
                   </div>
                   <p className="text-sm text-neutral-600 line-clamp-2">{resume.summary}</p>
                 </div>
-                <div className="flex space-x-3 mt-4">
+                <div className="flex space-x-3 mt-4 pt-4 border-t border-neutral-100">
                   <Link href={`/resume/${resume.id}`} className="text-sm text-blue-600 hover:underline font-medium">View</Link>
-                  <button className="text-sm text-neutral-600 hover:text-neutral-900 font-medium">Edit</button>
+                  <Link href={`/dashboard/edit/${resume.id}`} className="text-sm text-neutral-600 hover:text-neutral-900 font-medium">Edit</Link>
                 </div>
               </div>
             ))}
