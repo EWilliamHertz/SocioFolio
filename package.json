@@ -2,13 +2,14 @@
   "name": "resume-platform",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+"scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
-  "dependencies": {
+    "dependencies": {
     "@neondatabase/serverless": "^0.10.0",
     "@prisma/adapter-neon": "^5.22.0",
     "@prisma/client": "^5.22.0",
