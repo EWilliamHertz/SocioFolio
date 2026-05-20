@@ -1,3 +1,4 @@
+// src/app/page.tsx
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
@@ -65,21 +66,28 @@ export default async function Home() {
               <p className="text-neutral-400 italic text-sm">The feed is currently empty. Be the first to register and highlight your resume!</p>
             ) : (
               highlightedResumes.map((resume) => (
-                <Link className="block bg-white p-6 rounded-lg shadow-sm border border-neutral-200 hover:shadow-md transition-shadow cursor-pointer group" href={`/resume/${resume.id}`} key={resume.id}>
-                  <div className="flex items-center space-x-4 mb-4">
-                    {resume.user.image ? (
-                      <img src={resume.user.image} alt={resume.user.name || "User"} className="w-10 h-10 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-neutral-200 flex items-center justify-center text-neutral-500 font-bold">
-                        {resume.user.name?.charAt(0) || "U"}
-                      </div>
-                    )}
-                    <div>
-                      <h4 className="font-medium group-hover:text-blue-600 transition-colors">{resume.title}</h4>
-                      <p className="text-xs text-neutral-500">{resume.user.name}</p>
+                <Link className="block bg-white rounded-lg shadow-sm border border-neutral-200 hover:shadow-md transition-shadow cursor-pointer group overflow-hidden" href={`/resume/${resume.id}`} key={resume.id}>
+                  {resume.imageUrl && (
+                    <div className="w-full h-32 bg-neutral-100 overflow-hidden border-b border-neutral-100">
+                      <img src={resume.imageUrl} alt="Cover" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-center space-x-4 mb-4">
+                      {resume.user.image ? (
+                        <img src={resume.user.image} alt={resume.user.name || "User"} className="w-10 h-10 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-neutral-200 flex items-center justify-center text-neutral-500 font-bold">
+                          {resume.user.name?.charAt(0) || "U"}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="font-medium group-hover:text-blue-600 transition-colors">{resume.title}</h4>
+                        <p className="text-xs text-neutral-500">{resume.user.name}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-neutral-600 line-clamp-3">{resume.summary}</p>
                   </div>
-                  <p className="text-sm text-neutral-600 line-clamp-3">{resume.summary}</p>
                 </Link>
               ))
             )}

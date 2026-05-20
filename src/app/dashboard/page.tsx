@@ -1,8 +1,8 @@
-// src/app/dashboard/page.tsx
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { deleteResume } from "@/app/actions/resume";
 
 export default async function Dashboard() {
   // Check if user is logged in
@@ -63,9 +63,13 @@ export default async function Dashboard() {
                   </div>
                   <p className="text-sm text-neutral-600 line-clamp-2">{resume.summary}</p>
                 </div>
-                <div className="flex space-x-3 mt-4 pt-4 border-t border-neutral-100">
+                <div className="flex items-center space-x-4 mt-4 pt-4 border-t border-neutral-100">
                   <Link href={`/resume/${resume.id}`} className="text-sm text-blue-600 hover:underline font-medium">View</Link>
                   <Link href={`/dashboard/edit/${resume.id}`} className="text-sm text-neutral-600 hover:text-neutral-900 font-medium">Edit</Link>
+                  <form action={deleteResume}>
+                    <input type="hidden" name="id" value={resume.id} />
+                    <button type="submit" className="text-sm text-red-600 hover:text-red-800 font-medium">Delete</button>
+                  </form>
                 </div>
               </div>
             ))}

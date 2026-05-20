@@ -10,7 +10,7 @@ export async function createResume(formData: FormData) {
 
   const title = formData.get("title") as string;
   const summary = formData.get("summary") as string;
-  const content = formData.get("content") as string; // Will hold our JSON sections
+  const content = formData.get("content") as string;
   const imageUrl = formData.get("imageUrl") as string;
   const youtubeUrl = formData.get("youtubeUrl") as string;
   const isHighlighted = formData.get("isHighlighted") === "on";
@@ -27,7 +27,10 @@ export async function createResume(formData: FormData) {
     }
   });
 
-  export async function updateResume(formData: FormData) {
+  redirect("/dashboard");
+}
+
+export async function updateResume(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
 
@@ -55,6 +58,24 @@ export async function createResume(formData: FormData) {
       youtubeUrl: youtubeUrl || null,
       isHighlighted,
     }
+  });
+
+  redirect("/dashboard");
+}
+
+export async function deleteResume(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const id = formData.get("id") as string;
+
+  const existingResume = await prisma.resume.findUnique({ where: { id } });
+  if (!existingResume || existingResume.userId !== session.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  await prisma.resume.delete({
+    where: { id }
   });
 
   redirect("/dashboard");

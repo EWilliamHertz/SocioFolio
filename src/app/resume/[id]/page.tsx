@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { sendMessage } from "@/app/actions/message";
 import ShareButton from "./ShareButton";
+import PrintButton from "./PrintButton";
 
 export default async function ResumeViewer({ params, searchParams }: { params: Promise<{ id: string }>, searchParams: Promise<{ sent?: string }> }) {
   const { id } = await params;
@@ -41,58 +42,69 @@ export default async function ResumeViewer({ params, searchParams }: { params: P
   const videoId = resume.youtubeUrl ? getYoutubeId(resume.youtubeUrl) : null;
 
   return (
-    <main className="min-h-screen bg-neutral-50 text-neutral-900 py-12 px-6">
-      <div className="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-sm border border-neutral-200">
-        <div className="flex items-center justify-between mb-8">
-          <Link href="/" className="text-blue-600 hover:underline inline-block text-sm">&larr; Back to Feed</Link>
-          <ShareButton />
+    <main className="min-h-screen bg-neutral-50 text-neutral-900 py-12 px-6 print:bg-white print:py-0 print:px-0">
+      <div className="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-sm border border-neutral-200 print:shadow-none print:border-none print:p-0 print:max-w-full">
+        
+        {/* Header Actions - Hidden on Print */}
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 print:hidden gap-4">
+          <Link href="/" className="text-blue-600 hover:underline text-sm">&larr; Back to Feed</Link>
+          <div className="flex space-x-3">
+            <ShareButton />
+            <PrintButton />
+          </div>
         </div>
 
         {sent && (
-          <div className="mb-8 p-4 bg-green-50 text-green-800 rounded-md border border-green-200 text-sm font-medium">
+          <div className="mb-8 p-4 bg-green-50 text-green-800 rounded-md border border-green-200 text-sm font-medium print:hidden">
             Message sent successfully to {resume.user.name}!
           </div>
         )}
 
-        <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4 mb-8 pb-8 border-b border-neutral-100">
+        {/* Talent Profile Block */}
+        <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4 mb-8 pb-8 border-b border-neutral-100 print:border-b-2 print:border-black">
           {resume.user.image ? (
             <img src={resume.user.image} alt={resume.user.name || "User"} className="w-16 h-16 rounded-full object-cover" />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-neutral-200 flex items-center justify-center text-neutral-500 font-bold text-xl shrink-0">
+            <div className="w-16 h-16 rounded-full bg-neutral-200 flex items-center justify-center text-neutral-500 font-bold text-xl shrink-0 print:bg-neutral-100">
               {resume.user.name?.charAt(0) || "U"}
             </div>
           )}
-          <div className="flex-1">
+          <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl font-bold tracking-tight">{resume.title}</h1>
-            <p className="text-neutral-500 mt-1">{resume.user.name}</p>
+            <p className="text-neutral-500 mt-1 print:text-neutral-800">{resume.user.name}</p>
           </div>
 
-          {session?.user?.id && session.user.id !== resume.userId ? (
-            <form action={sendMessage} className="flex flex-col sm:flex-row gap-2 shrink-0">
-              <input type="hidden" name="receiverId" value={resume.userId} />
-              <input type="hidden" name="resumeId" value={resume.id} />
-              <input type="text" name="content" required placeholder="Type a message..." className="px-4 py-2 border border-neutral-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm" />
-              <button type="submit" className="px-6 py-2 bg-black text-white rounded-md hover:bg-neutral-800 transition-colors shadow-sm font-medium text-sm">
-                Send
-              </button>
-            </form>
-          ) : !session?.user?.id ? (
-            <Link href="/login" className="px-6 py-2 bg-neutral-200 text-neutral-800 rounded-md hover:bg-neutral-300 transition-colors shadow-sm font-medium text-sm text-center">
-              Log in to contact
-            </Link>
-          ) : null}
+          {/* Contact Form - Hidden on Print */}
+          <div className="print:hidden">
+            {session?.user?.id && session.user.id !== resume.userId ? (
+              <form action={sendMessage} className="flex flex-col sm:flex-row gap-2 shrink-0">
+                <input type="hidden" name="receiverId" value={resume.userId} />
+                <input type="hidden" name="resumeId" value={resume.id} />
+                <input type="text" name="content" required placeholder="Type a message..." className="px-4 py-2 border border-neutral-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm" />
+                <button type="submit" className="px-6 py-2 bg-black text-white rounded-md hover:bg-neutral-800 transition-colors shadow-sm font-medium text-sm">
+                  Send
+                </button>
+              </form>
+            ) : !session?.user?.id ? (
+              <Link href="/login" className="px-6 py-2 bg-neutral-200 text-neutral-800 rounded-md hover:bg-neutral-300 transition-colors shadow-sm font-medium text-sm text-center block">
+                Log in to contact
+              </Link>
+            ) : null}
+          </div>
         </div>
 
-        <div className="prose max-w-none">
+        {/* Resume Content */}
+        <div className="prose max-w-none print:text-black">
           {resume.imageUrl && (
-             <img src={resume.imageUrl} alt="Portfolio Cover" className="w-full h-64 md:h-96 rounded-xl shadow-sm mb-12 object-cover" />
+             <img src={resume.imageUrl} alt="Portfolio Cover" className="w-full h-64 md:h-96 rounded-xl shadow-sm mb-12 object-cover print:h-64" />
           )}
 
           <h3 className="text-xl font-semibold mb-4 text-neutral-800">Professional Summary</h3>
-          <p className="text-neutral-600 mb-12 leading-relaxed text-lg">{resume.summary}</p>
+          <p className="text-neutral-600 mb-12 leading-relaxed text-lg print:text-black">{resume.summary}</p>
           
+          {/* Hide videos during print */}
           {videoId && (
-            <div className="mb-12">
+            <div className="mb-12 print:hidden">
               <h3 className="text-xl font-semibold mb-4 text-neutral-800">Video Introduction</h3>
               <div className="relative w-full overflow-hidden" style={{ paddingTop: '56.25%' }}>
                 <iframe 
@@ -110,16 +122,16 @@ export default async function ResumeViewer({ params, searchParams }: { params: P
           {legacyContent && (
             <div className="mb-8">
               <h3 className="text-xl font-semibold mb-3 text-neutral-800">Experience & Details</h3>
-              <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap">{legacyContent}</p>
+              <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap print:text-black">{legacyContent}</p>
             </div>
           )}
 
           {/* Render new dynamic JSON content */}
           {customSections.length > 0 && customSections.map((section: any, idx: number) => (
             section.title || section.content ? (
-              <div key={idx} className="mb-8">
+              <div key={idx} className="mb-8 print:break-inside-avoid">
                 <h3 className="text-xl font-semibold mb-3 text-neutral-800">{section.title}</h3>
-                <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap">{section.content}</p>
+                <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap print:text-black">{section.content}</p>
               </div>
             ) : null
           ))}
