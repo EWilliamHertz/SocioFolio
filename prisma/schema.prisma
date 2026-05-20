@@ -1,0 +1,79 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String    @id @default(cuid())
+  name             String?
+  email            String    @unique
+  password         String
+  image            String?   
+  resumes          Resume[]
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Resume {
+  id            String    @id @default(cuid())
+  title         String
+  summary       String?
+  content       String?   
+  isHighlighted Boolean   @default(false)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  content     String
+  senderId    String
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId  String
+  receiver    User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model Resume {
+  id            String    @id @default(cuid())
+  title         String
+  summary       String?
+  content       String?   
+  isHighlighted Boolean   @default(false)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String
+  image         String?   // Will store profile picture URLs
+  language      String    @default("en") // Settings for the language system
+  resumes       Resume[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Resume {
+  id            String    @id @default(cuid())
+  title         String
+  summary       String?
+  content       String?   // Can store JSON or Markdown for organic resume building
+  isHighlighted Boolean   @default(false)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
